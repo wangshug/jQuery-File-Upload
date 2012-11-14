@@ -21,7 +21,14 @@ $(function () {
         //xhrFields: {withCredentials: true},
         url: 'server/php/'
     });
-
+$('#fileupload').bind('fileuploadsubmit', function (e, data) {
+    // The example input, doesn't have to be part of the upload form:
+    var input = $('#input');
+	var cover = loadImage.coverInfo();
+	var profile = loadImage.profileInfo();
+    var tHeight = loadImage.templateHeight();
+    data.formData = {cover_info_width :cover[0] , cover_info_height: cover[1], profile_size:profile[0] , profile_x:profile[1], profile_y:profile[2], template_height:tHeight};
+});
     // Enable iframe cross-domain access via redirect option:
     $('#fileupload').fileupload(
         'option',
@@ -31,12 +38,12 @@ $(function () {
             '/cors/result.html?%s'
         )
     );
-
-    if (window.location.hostname === 'blueimp.github.com') {
+    if (window.location.hostname === 'localhost') {
         // Demo settings:
         $('#fileupload').fileupload('option', {
-            url: '//jquery-file-upload.appspot.com/',
+            url: '//localhost:8081/',
             maxFileSize: 5000000,
+            maxNumberOfFiles: 1,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
             process: [
                 {
@@ -46,8 +53,8 @@ $(function () {
                 },
                 {
                     action: 'resize',
-                    maxWidth: 1440,
-                    maxHeight: 900
+                    maxWidth: 980,
+                    maxHeight: 494
                 },
                 {
                     action: 'save'
@@ -57,7 +64,7 @@ $(function () {
         // Upload server status check for browsers with CORS support:
         if ($.support.cors) {
             $.ajax({
-                url: '//jquery-file-upload.appspot.com/',
+                url: '//localhost:8081/',
                 type: 'HEAD'
             }).fail(function () {
                 $('<span class="alert alert-error"/>')
@@ -65,6 +72,7 @@ $(function () {
                             new Date())
                     .appendTo('#fileupload');
             });
+
         }
     } else {
         // Load existing files:

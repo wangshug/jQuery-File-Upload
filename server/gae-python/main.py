@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 #
 # jQuery File Upload Plugin GAE Python Example 1.1.5
 # https://github.com/blueimp/jQuery-File-Upload
@@ -14,9 +14,11 @@ from __future__ import with_statement
 from google.appengine.api import files, images
 from google.appengine.ext import blobstore, deferred
 from google.appengine.ext.webapp import blobstore_handlers
-import json, re, urllib, webapp2
+from google.appengine.api.logservice import logservice
+from PIL import Image
+import json, re, urllib, webapp2, logging, cStringIO
 
-WEBSITE = 'http://blueimp.github.com/jQuery-File-Upload/'
+WEBSITE = 'http://localhost/jQuery-File-Upload/'
 MIN_FILE_SIZE = 1 # bytes
 MAX_FILE_SIZE = 5000000 # bytes
 IMAGE_TYPES = re.compile('image/(gif|p?jpeg|(x-)?png)')
@@ -62,11 +64,39 @@ class UploadHandler(webapp2.RequestHandler):
             f.write(data)
         files.finalize(blob)
         return files.blobstore.get_blob_key(blob)
-    
+
+    def write_profile(self, data, info):
+        info['name'] = 'profile_' + info['name']
+        cover_width = int(self.request.POST['cover_info_width'])
+        cover_height = int(self.request.POST['cover_info_height'])
+        profile_size = int(self.request.POST['profile_size'])
+        profile_x = int(self.request.POST['profile_x'])
+        profile_y = int(self.request.POST['profile_y'])
+        template_height = int(self.request.POST['template_height'])
+        im = Image.open(data).resize([cover_width, template_height])
+        out = im.crop([profile_x,profile_y,profile_x + profile_size, profile_y + profile_size])
+        buf = cStringIO.StringIO()
+        out.save(buf, 'JPEG')
+        info['size'] = self.get_file_size(buf)
+        return self.write_blob(buf.getvalue(), info)
+        
+    def write_cover(self, data, info):
+        info['name'] = 'cover_' + info['name']
+        cover_width = int(self.request.POST['cover_info_width'])
+        cover_height = int(self.request.POST['cover_info_height'])
+        template_height = int(self.request.POST['template_height'])
+        out = Image.open(data).resize([cover_width, template_height]).crop([0,0,cover_width, cover_height])
+        buf = cStringIO.StringIO()
+        out.save(buf, 'JPEG')
+        info['size'] = self.get_file_size(buf)
+        return self.write_blob(buf.getvalue(), info)
+
     def handle_upload(self):
         results = []
         blob_keys = []
-        for name, fieldStorage in self.request.POST.items():
+        #for name, fieldStorage in self.request.POST.items():
+        fieldStorage = self.request.POST['files[]']
+        for num in range(0, 2):
             if type(fieldStorage) is unicode:
                 continue
             result = {}
@@ -74,29 +104,26 @@ class UploadHandler(webapp2.RequestHandler):
                 fieldStorage.filename)
             result['type'] = fieldStorage.type
             result['size'] = self.get_file_size(fieldStorage.file)
-            if self.validate(result):
-                blob_key = str(
-                    self.write_blob(fieldStorage.value, result)
-                )
+            if self.validate(result):                   
+                if num == 1 :
+                     blob_key = str(self.write_cover(fieldStorage.file, result))
+                elif num == 0:
+                     blob_key = str(self.write_profile(fieldStorage.file, result))
                 blob_keys.append(blob_key)
                 result['delete_type'] = 'DELETE'
                 result['delete_url'] = self.request.host_url +\
                     '/?key=' + urllib.quote(blob_key, '')
                 if (IMAGE_TYPES.match(result['type'])):
                     try:
-                        result['url'] = images.get_serving_url(
-                            blob_key,
-                            secure_url=self.request.host_url\
-                                .startswith('https')
-                        )
-                        result['thumbnail_url'] = result['url'] +\
+                        
+                        result['url'] = self.request.host_url +\
+                            '/' + blob_key + '/' + urllib.quote(
+                                result['name'].encode('utf-8'), '')
+                        result['thumbnail_url'] = images.get_serving_url(blob_key) +\
                             THUMBNAIL_MODIFICATOR
-                    except: # Could not get an image serving url
+                    except Exception as inst: # Could not get an image serving url
+                        logging.info('exception: %s', inst)
                         pass
-                if not 'url' in result:
-                    result['url'] = self.request.host_url +\
-                        '/' + blob_key + '/' + urllib.quote(
-                            result['name'].encode('utf-8'), '')
             results.append(result)
         deferred.defer(
             cleanup,
