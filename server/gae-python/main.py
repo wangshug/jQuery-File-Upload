@@ -56,12 +56,15 @@ class UploadHandler(webapp2.RequestHandler):
         return size
     
     def write_blob(self, data, info):
+        buf = cStringIO.StringIO()
+        data.save(buf, info['type'][6:])
+        info['size'] = self.get_file_size(buf)
         blob = files.blobstore.create(
             mime_type=info['type'],
             _blobinfo_uploaded_filename=info['name']
         )
         with files.open(blob, 'a') as f:
-            f.write(data)
+            f.write(buf.getvalue())
         files.finalize(blob)
         return files.blobstore.get_blob_key(blob)
 
@@ -75,10 +78,7 @@ class UploadHandler(webapp2.RequestHandler):
         template_height = int(self.request.POST['template_height'])
         im = Image.open(data).resize([cover_width, template_height])
         out = im.crop([profile_x,profile_y,profile_x + profile_size, profile_y + profile_size])
-        buf = cStringIO.StringIO()
-        out.save(buf, 'JPEG')
-        info['size'] = self.get_file_size(buf)
-        return self.write_blob(buf.getvalue(), info)
+        return self.write_blob(out, info)
         
     def write_cover(self, data, info):
         info['name'] = 'cover_' + info['name']
@@ -86,10 +86,7 @@ class UploadHandler(webapp2.RequestHandler):
         cover_height = int(self.request.POST['cover_info_height'])
         template_height = int(self.request.POST['template_height'])
         out = Image.open(data).resize([cover_width, template_height]).crop([0,0,cover_width, cover_height])
-        buf = cStringIO.StringIO()
-        out.save(buf, 'JPEG')
-        info['size'] = self.get_file_size(buf)
-        return self.write_blob(buf.getvalue(), info)
+        return self.write_blob(out, info)
 
     def handle_upload(self):
         results = []

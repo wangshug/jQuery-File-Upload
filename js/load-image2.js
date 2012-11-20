@@ -4,7 +4,7 @@
 	var profile;
 
 	var coverWidth = 980;
-    var templateHeight = 494
+    var templateHeight = 440
 	var coverHeight = 300;
 	var coverAndProfileHeight = 400;
 	var profileFromX = 20;
@@ -29,31 +29,31 @@
 		c.height = templateHeight;
         var h = c.getContext("2d");
            
-	var imageObj = new Image();
-	imageObj.onload = function() {
-		h.drawImage(this, 0, 0);
-		var k = document.createElement("canvas"),
-		l;
-		k.width  = coverWidth;
-		k.height = coverAndProfileHeight;
-		l = k.getContext("2d");
+        var imageObj = new Image();
+        imageObj.onload = function() {
+            h.drawImage(this, 0, 0);
+            var k = document.createElement("canvas"),
+            l;
+            k.width  = coverWidth;
+            k.height = coverAndProfileHeight;
+            l = k.getContext("2d");
 
-		//first draw upload picture this should large than whole heigh of cover and profile
-		l.drawImage(a,0,0, coverWidth, coverAndProfileHeight),
-		//draw profile margin
-		l.rect(profileFromX, profileFromY, profileWithMargin, profileWithMargin),
-		l.lineWidth = marginSize,
-		l.strokeStyle = 'white',
-		l.stroke();
-		//get cover image from process canvas
-		cover = l.getImageData(0, 0, coverWidth, coverHeight);			
-		//get profile image from process canvas
-		profile = l.getImageData(profileFromX, profileFromY, profileWithMargin, profileWithMargin);
-		//put cover into image canvas
-		h.putImageData(cover, 0, 0);
-		//put profile into image canvas
-		h.putImageData(profile, profileFromX,profileFromY);
-		k = l = null
+            //first draw upload picture this should large than whole heigh of cover and profile
+            l.drawImage(a,0,0, coverWidth, coverAndProfileHeight),
+            //draw profile margin
+            l.rect(profileFromX, profileFromY, profileWithMargin, profileWithMargin),
+            l.lineWidth = marginSize,
+            l.strokeStyle = 'white',
+            l.stroke();
+            //get cover image from process canvas
+            cover = l.getImageData(0, 0, coverWidth, coverHeight);			
+            //get profile image from process canvas
+            profile = l.getImageData(profileFromX, profileFromY, profileWithMargin, profileWithMargin);
+            //put cover into image canvas
+            h.putImageData(cover, 0, 0);
+            //put profile into image canvas
+            h.putImageData(profile, profileFromX,profileFromY);
+            k = l = null
 	},
 	imageObj.src = "template.jpg";
 			
@@ -74,7 +74,7 @@
 			   g < 1 && (e = parseInt(e * g, 10), f = parseInt(f * g, 10)), 
 			   a.getContext || 
 			   c.canvas && d.getContext ? 
-			   (d.width = e, d.height = f, a._type === "image/jpeg" ? b.renderImageToCanvas(a, d, e, f) : d.getContext("2d").drawImage(a, 0, 0, e, f), d) : 
+			   (d.width = e, d.height = f, b.renderImageToCanvas(a, d, e, f), d) : 
 			   (a.width = e, a.height = f, a)
     }, b.createObjectURL = function(a) {
         return c ? c.createObjectURL(a) : !1
