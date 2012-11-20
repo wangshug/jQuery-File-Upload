@@ -296,7 +296,10 @@
                 var that = $(this).data('fileupload');
                 if (data.url) {
                     $.ajax(data);
-                    that._adjustMaxNumberOfFiles(1);
+                    var button = $(this).find('button');
+                    if(button.length <= 2) {
+                        that._adjustMaxNumberOfFiles(1);
+                    }
                 }
                 that._transition(data.context).done(
                     function () {

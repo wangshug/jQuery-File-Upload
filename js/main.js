@@ -1,4 +1,4 @@
-/*
+﻿/*
  * jQuery File Upload Plugin JS Example 6.11
  * https://github.com/blueimp/jQuery-File-Upload
  *
@@ -38,37 +38,22 @@ $('#fileupload').bind('fileuploadsubmit', function (e, data) {
             '/cors/result.html?%s'
         )
     );
-    if (window.location.hostname === 'localhost') {
+    if (window.location.hostname === 'lab.sunshine-wang.info') {
         // Demo settings:
         $('#fileupload').fileupload('option', {
-            url: '//localhost:8081/',
+            url: '//sunshine-wangsg.appspot.com:8080',
             maxFileSize: 5000000,
             maxNumberOfFiles: 1,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            process: [
-                {
-                    action: 'load',
-                    fileTypes: /^image\/(gif|jpeg|png)$/,
-                    maxFileSize: 20000000 // 20MB
-                },
-                {
-                    action: 'resize',
-                    maxWidth: 980,
-                    maxHeight: 494
-                },
-                {
-                    action: 'save'
-                }
-            ]
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
         });
         // Upload server status check for browsers with CORS support:
         if ($.support.cors) {
             $.ajax({
-                url: '//localhost:8081/',
+                url: '//sunshine-wangsg.appspot.com:8080/',
                 type: 'HEAD'
             }).fail(function () {
                 $('<span class="alert alert-error"/>')
-                    .text('Upload server currently unavailable - ' +
+                    .text('图片保存在google app engine上，如果您想下载请翻过我们伟大的墙 - ' +
                             new Date())
                     .appendTo('#fileupload');
             });

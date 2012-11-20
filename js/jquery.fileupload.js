@@ -1010,6 +1010,7 @@
             if (options.fileInput === undefined) {
                 options.fileInput = this.element.is('input[type="file"]') ?
                         this.element : this.element.find('input[type="file"]');
+                options.fileInput.removeAttr('disabled');
             } else if (!(options.fileInput instanceof $)) {
                 options.fileInput = $(options.fileInput);
             }
