@@ -41,7 +41,7 @@ $('#fileupload').bind('fileuploadsubmit', function (e, data) {
     if (window.location.hostname === 'lab.sunshine-wang.info') {
         // Demo settings:
         $('#fileupload').fileupload('option', {
-            url: '//sunshine-wangsg.appspot.com:8080',
+            url: '//sunshine-wangsg.appspot.com',
             maxFileSize: 5000000,
             maxNumberOfFiles: 1,
             acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
@@ -49,8 +49,9 @@ $('#fileupload').bind('fileuploadsubmit', function (e, data) {
         // Upload server status check for browsers with CORS support:
         if ($.support.cors) {
             $.ajax({
-                url: '//sunshine-wangsg.appspot.com:8080/',
-                type: 'HEAD'
+                url: '//sunshine-wangsg.appspot.com/',
+                type: 'HEAD', 
+                timeout: 3000
             }).fail(function () {
                 $('<span class="alert alert-error"/>')
                     .text('图片保存在google app engine上，如果您想下载请翻过我们伟大的墙 - ' +

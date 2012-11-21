@@ -81,16 +81,16 @@
     <div class="well">
         <h3>使用指南</h3>
         <ul>
-            <li><span class="label label-inverse">只有新浪微博会员才支持修改封面，鄙视下</span></li>
+            <li><span class="label label-inverse">只有新浪微博会员才支持修改封面，同时新浪也会调整头像的上下位置，如有不合适请联系我更改</span></li>
             <li><span class="label label-inverse">图片大小请不要超过5 MB</span> </li>
             <li><span class="label label-inverse">支持JPG, GIF, PNG格式</span></li>
             <li><span class="label label-inverse">上传的图片5分钟后会自动删除</span></li>
-            <li><span class="label label-inverse">该页面沿用<a href="https://github.com/blueimp/jQuery-File-Upload">JQuery-File-Upload</a>插件的页面，感谢</span></li>
+            <li><span class="label label-inverse">该页面继承<a href="https://github.com/blueimp/jQuery-File-Upload">JQuery-File-Upload</a>插件，感谢</span></li>
         </ul>
     </div>
     <div id="footer">
       <div class="container">
-        <p class="muted credit">Create by <a href="http://blog.sunshine-wang.info">sunshine-wang</a>.</p>
+        <p class="muted credit">Create by <a href="http://blog.sunshine-wang.info/?p=50">sunshine-wang</a>.</p>
       </div>
     </div>
 </div>
@@ -100,32 +100,32 @@
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">
         <td class="preview"><span class="fade"></span></td>
-<!--        <td class="name"><span>{%=file.name%}</span></td>
+        <td class="name"><span>{%=file.name%}</span></td>
         <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
         {% if (file.error) { %}
             <td class="error" colspan="2"><span class="label label-important">Error</span> {%=file.error%}</td>
         {% } else if (o.files.valid && !i) { %}
+<!--     
             <td>
                 <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar" style="width:0%;"></div></div>
-            </td>-->
-            <td>{% if (!o.options.autoUpload) { %}
-            <span class="start">
+            </td> 
+-->
+            <td class="start">{% if (!o.options.autoUpload) { %}
                 <button class="btn btn-primary">
                     <i class="icon-upload icon-white"></i>
                     <span>下载</span>
                 </button>
-            </span>
             <br><br>
-            <span class="cancel">
-                <button class="btn btn-warning">
-                    <i class="icon-ban-circle icon-white"></i>
-                    <span>取消</span>
-                </button>
-            </span>
             {% } %}</td>
         {% } else { %}
             <td colspan="2"></td>
         {% } %}
+        <td class="cancel">{% if (!i) { %}
+            <button class="btn btn-warning">
+                <i class="icon-ban-circle icon-white"></i>
+                <span>取消</span>
+            </button>
+        {% } %}</td>
     </tr>
 {% } %}
 </script>
